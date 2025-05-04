@@ -42,15 +42,34 @@
                 row.querySelector('.total').innerText = total.toFixed(2);
                 grandTotal += total;
             });
+            // final labor cost without meal
+            let totalOvertime = 0;
+            if (document.getElementById('overtimeCheckbox').checked) {
+                totalOvertime = (((grandTotal / 8) * 1.25) * 12) + grandTotal;  // Add OT if checkbox is checked
+            }else{
+                totalOvertime =  grandTotal ;
+            }
+            // const totalOvertime = (((grandTotal / 8) * 1.25) * 12) + grandTotal;
+            document.getElementById('overtimeTotal').innerText = totalOvertime.toFixed(2);
 
             document.getElementById('laborTotal').innerText = grandTotal.toFixed(2);
 
-            const mealCost = parseFloat(document.getElementById('mealCost').value) || 0;
-            const crewCount = parseFloat(document.getElementById('crewCount').value) || 0;
-            const mealTotal = mealCost * crewCount * normalDays;
+            let mealCost = parseFloat(document.getElementById('mealCost').value) || 0;
+            // const crewCount = parseFloat(document.getElementById('crewCount').value) || 0;
+            let mealTotal = 0;
+            mealCost = mealCost * 150;
+            rows.forEach(row => {
+                const qty = parseFloat(row.querySelector('.qty').value) || 0; // Get the qty for this row
+
+                // Multiply qty by mealCost and normalDays to get the meal cost for this row
+                mealTotal += qty * mealCost * normalDays; // Accumulate the meal cost for each row
+            });
+
+            // Set the final meal total
             document.getElementById('mealTotal').innerText = mealTotal.toFixed(2);
 
-            const subtotal = grandTotal + mealTotal;
+            // final labor cost
+            const subtotal = totalOvertime + mealTotal;
 
             // Additional cost calculations
             const tollFee = parseFloat(document.getElementById('tollFee').value) || 0;
@@ -113,8 +132,14 @@
             const tollTotalPerTruck = totalTollFee; // same value reused here
             document.getElementById('tollTotal').innerText = tollTotalPerTruck.toFixed(2);
 
+         
+
+            
+            const discount = parseFloat(document.getElementById('discount').value) || 0;
             const finalGrandTotal = subtotal + totalTollFee + gasAllowancePerTruck + totalSubcon + totalMiscellaneous;
+            const discountedTotal = finalGrandTotal - (finalGrandTotal * (discount / 100));
             document.getElementById('grandTotal').innerText = finalGrandTotal.toFixed(2);
+            document.getElementById('discountedGrandTotal').innerText = discountedTotal.toFixed(2);
         }
     </script>
 </head>
@@ -143,15 +168,15 @@
             <!-- Mark-up Fields -->
             <div class="grid grid-cols-3 gap-4 mb-4">
                 <div>
-                    <label class="block font-medium mb-1">Labor Markup %</label>
+                    <label class="block font-medium mb-1 sm:text-med text-xs lg:text-med">Labor Markup %</label>
                     <input id="laborMarkup" type="number" value="0" class="w-full border px-3 py-2" />
                 </div>
                 <div>
-                    <label class="block font-medium mb-1">Toll Markup %</label>
+                    <label class="block font-medium mb-1 sm:text-med text-xs lg:text-med">Toll Markup %</label>
                     <input id="tollMarkup" type="number" value="0" class="w-full border px-3 py-2" />
                 </div>
                 <div>
-                    <label class="block font-medium mb-1">Gas Markup %</label>
+                    <label class="block font-medium mb-1 sm:text-med text-xs lg:text-med">Gas Markup %</label>
                     <input id="gasMarkup" type="number" value="0" class="w-full border px-3 py-2" />
                 </div>
             </div>
@@ -159,30 +184,32 @@
             <!-- Additional Inputs -->
             <div class="grid grid-cols-3 gap-4 mb-4">
                 <div>
-                    <label class="block font-medium mb-1">Toll Fee</label>
+                    <label class="block font-medium mb-1 sm:text-med text-xs lg:text-med">Toll Fee</label>
                     <input id="tollFee" type="number" value="0" class="w-full border px-3 py-2" />
                 </div>
                 <div>
-                    <label class="block font-medium mb-1">Number of Trips (Ingress/Egress)</label>
+                    <label class="block font-medium mb-1 sm:text-med text-xs lg:text-med">Number of Trips
+                        (Ingress/Egress)</label>
                     <input id="numTrips" type="number" value="1" class="w-full border px-3 py-2" />
                 </div>
                 <div>
-                    <label class="block font-medium mb-1">Number of Hauling</label>
+                    <label class="block font-medium mb-1 sm:text-med text-xs lg:text-med">Number of Hauling</label>
                     <input id="numHauling" type="number" value="1" class="w-full border px-3 py-2" />
                 </div>
             </div>
 
             <div class="grid grid-cols-3 gap-4 mb-4">
                 <div>
-                    <label class="block font-medium mb-1">Number of Trucks</label>
+                    <label class="block font-medium mb-1 sm:text-med text-xs lg:text-med">Number of Trucks</label>
                     <input id="numTrucks" type="number" value="1" class="w-full border px-3 py-2" />
                 </div>
                 <div>
-                    <label class="block font-medium mb-1">Diesel per Km</label>
+                    <label class="block font-medium mb-1 sm:text-med text-xs lg:text-med">Diesel/KM</label>
                     <input id="dieselPerKm" type="number" value="0" class="w-full border px-3 py-2" />
                 </div>
                 <div>
-                    <label class="block font-medium mb-1">Distance from Warehouse to Venue (km)</label>
+                    <label class="block font-medium mb-1 sm:text-med text-xs lg:text-med">Distance from Warehouse to
+                        Venue (KM)</label>
                     <input id="distance" type="number" value="0" class="w-full border px-3 py-2" />
                 </div>
             </div>
@@ -192,10 +219,10 @@
                     <thead>
                         <tr class="bg-blue-100 text-blue-900 text-center">
                             <th class="p-3 border">Position</th>
-                            <th class="p-3 border">Rate / 8hrs</th>
+                            <th class="p-3 border">Rate(8hrs)</th>
                             <th class="p-3 border">Quantity</th>
-                            <th class="p-3 border">Holiday Days</th>
-                            <th class="p-3 border">Sunday Days</th>
+                            <th class="p-3 border">Holiday/s</th>
+                            <th class="p-3 border">Sunday/s</th>
                             <th class="p-3 border">Total</th>
                         </tr>
                     </thead>
@@ -286,13 +313,12 @@
                 <div x-show="open" x-transition class="p-4">
                     <div class="grid grid-cols-3 gap-6">
                         <div>
-                            <label class="block font-medium mb-1">Cost per Meal</label>
+                            <label class="block font-medium mb-1 sm:text-med text-xs lg:text-med">Meals per Day (150
+                                each)</label>
+
                             <input id="mealCost" type="number" value="0" class="w-full border px-3 py-2" />
                         </div>
-                        <div>
-                            <label class="block font-medium mb-1">Number of Crew</label>
-                            <input id="crewCount" type="number" value="0" class="w-full border px-3 py-2" />
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -308,11 +334,11 @@
                         <h3 class="font-semibold mb-2">Wingvan</h3>
                         <div class="grid grid-cols-3 gap-6">
                             <div>
-                                <label class="block font-medium mb-1">Quantity</label>
+                                <label class="block font-medium mb-1 sm:text-med text-xs lg:text-med">Quantity</label>
                                 <input id="wingvanCount" type="number" value="0" class="w-full border px-3 py-2" />
                             </div>
                             <div>
-                                <label class="block font-medium mb-1">Cost</label>
+                                <label class="block font-medium mb-1 sm:text-med text-xs lg:text-med">Cost</label>
                                 <input id="wingvanCost" type="number" value="0" class="w-full border px-3 py-2" />
                             </div>
                         </div>
@@ -323,11 +349,11 @@
                         <h3 class="font-semibold mb-2">Mobile Crane</h3>
                         <div class="grid grid-cols-3 gap-6">
                             <div>
-                                <label class="block font-medium mb-1">Quantity</label>
+                                <label class="block font-medium mb-1 sm:text-med text-xs lg:text-med">Quantity</label>
                                 <input id="craneCount" type="number" value="0" class="w-full border px-3 py-2" />
                             </div>
                             <div>
-                                <label class="block font-medium mb-1">Cost</label>
+                                <label class="block font-medium mb-1 sm:text-med text-xs lg:text-med">Cost</label>
                                 <input id="craneCost" type="number" value="0" class="w-full border px-3 py-2" />
                             </div>
                         </div>
@@ -338,11 +364,11 @@
                         <h3 class="font-semibold mb-2">Manpower</h3>
                         <div class="grid grid-cols-3 gap-6">
                             <div>
-                                <label class="block font-medium mb-1">Quantity</label>
+                                <label class="block font-medium mb-1 sm:text-med text-xs lg:text-med">Quantity</label>
                                 <input id="manpowerCount" type="number" value="0" class="w-full border px-3 py-2" />
                             </div>
                             <div>
-                                <label class="block font-medium mb-1">Cost</label>
+                                <label class="block font-medium mb-1 sm:text-med text-xs lg:text-med">Cost</label>
                                 <input id="manpowerCost" type="number" value="0" class="w-full border px-3 py-2" />
                             </div>
                         </div>
@@ -372,11 +398,11 @@
                         <h3 class="font-semibold mb-2">Airfare</h3>
                         <div class="grid grid-cols-3 gap-6">
                             <div>
-                                <label class="block font-medium mb-1">Quantity</label>
+                                <label class="block font-medium mb-1 sm:text-med text-xs lg:text-med">Quantity</label>
                                 <input id="airfareCount" type="number" value="0" class="w-full border px-3 py-2" />
                             </div>
                             <div>
-                                <label class="block font-medium mb-1">Cost</label>
+                                <label class="block font-medium mb-1 sm:text-med text-xs lg:text-med">Cost</label>
                                 <input id="airfareCost" type="number" value="0" class="w-full border px-3 py-2" />
                             </div>
                         </div>
@@ -387,11 +413,11 @@
                         <h3 class="font-semibold mb-2">Accommodation</h3>
                         <div class="grid grid-cols-3 gap-6">
                             <div>
-                                <label class="block font-medium mb-1">Quantity</label>
+                                <label class="block font-medium mb-1 sm:text-med text-xs lg:text-med">Quantity</label>
                                 <input id="accomodationCount" type="number" value="0" class="w-full border px-3 py-2" />
                             </div>
                             <div>
-                                <label class="block font-medium mb-1">Cost</label>
+                                <label class="block font-medium mb-1 sm:text-med text-xs lg:text-med">Cost</label>
                                 <input id="accomodationCost" type="number" value="0" class="w-full border px-3 py-2" />
                             </div>
                         </div>
@@ -402,48 +428,85 @@
                         <h3 class="font-semibold mb-2">Expendables & Other Charges</h3>
                         <div class="grid grid-cols-3 gap-6">
                             <div>
-                                <label class="block font-medium mb-1">Quantity</label>
+                                <label class="block font-medium mb-1 sm:text-med text-xs lg:text-med">Quantity</label>
                                 <input id="expendablesCount" type="number" value="0" class="w-full border px-3 py-2" />
                             </div>
                             <div>
-                                <label class="block font-medium mb-1">Cost</label>
+                                <label class="block font-medium mb-1 sm:text-med text-xs lg:text-med">Cost</label>
                                 <input id="expendablesCost" type="number" value="0" class="w-full border px-3 py-2" />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+             <!-- Add Discount Input -->
+             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                <div>
+                    <label class="block font-medium mb-1">Discount (%)</label>
+                    <input id="discount" type="number" value="0" max="20" class="w-full border px-3 py-2" />
+
+<script>
+  const discountInput = document.getElementById('discount');
+
+  discountInput.addEventListener('input', function() {
+    if (parseInt(discountInput.value) > 20) {
+      discountInput.value = 20;
+    }
+  });
+</script>
+
+                </div>
+            </div>
             <div class="mb-6">
-    <div class="flex flex-col items-center justify-center px-4">
-        <div class="bg-blue-100 p-6 rounded-2xl shadow-lg text-blue-900 w-full max-w-xl">
-            <p class="text-lg md:text-xl font-semibold mb-2">
-                Labor Total: <span class="font-bold">₱<span id="laborTotal">0.00</span></span>
-            </p>
-            <p class="text-lg md:text-xl font-semibold mb-2">
-                Meal Total: <span class="font-bold">₱<span id="mealTotal">0.00</span></span>
-            </p>
-            <p class="text-lg md:text-xl font-semibold mb-2">
-                Total Toll Fee: <span class="font-bold">₱<span id="totalTollFee">0.00</span></span>
-            </p>
-            <p class="text-lg md:text-xl font-semibold mb-2">
-                Total Gas Allowance per Truck: <span class="font-bold">₱<span id="gasTotal">0.00</span></span>
-            </p>
-            <p class="text-lg md:text-xl font-semibold mb-2">
-                Total Toll Fee Expenses per Truck: <span class="font-bold">₱<span id="tollTotal">0.00</span></span>
-            </p>
-            <p class="text-lg md:text-xl font-semibold mb-2">
-                Total Subcon Fee: <span class="font-bold">₱<span id="totalSubconFee">0.00</span></span>
-            </p>
-            <p class="text-lg md:text-xl font-semibold mb-4">
-                Total Miscellaneous Fee: <span class="font-bold">₱<span id="totalMiscellaneousFee">0.00</span></span>
-            </p>
-            <hr class="border-blue-300 mb-4">
-            <p class="text-2xl md:text-3xl font-extrabold text-blue-800 text-center">
-                Grand Total: ₱<span id="grandTotal">0.00</span>
-            </p>
-        </div>
-    </div>
-</div>
+                <div class="flex flex-col items-center justify-center px-4">
+                    <div class="bg-blue-100 p-6 rounded-2xl shadow-lg text-blue-900 w-full max-w-xl">
+                        <div class="mb-4">
+                            <label class="block font-medium mb-2">
+                                <input type="checkbox" id="overtimeCheckbox" class="mr-2" /> Add Overtime to Total
+                            </label>
+                        </div>
+
+                        <p class="text-lg md:text-xl font-semibold mb-2">
+                            Labor Fee(Regular Hours): <span class="font-bold">₱<span id="laborTotal">0.00</span></span>
+                        </p>
+                        <p class="text-lg md:text-xl font-semibold mb-2">
+                            Labor Fee(Overtime included): <span class="font-bold">₱<span
+                                    id="overtimeTotal">0.00</span></span>
+                        </p>
+                        <!-- <p class="text-lg md:text-xl font-semibold mb-2">
+                            Labor Total: <span class="font-bold">₱<span id="overtimeTotal">0.00</span></span>
+                        </p> -->
+                        <p class="text-lg md:text-xl font-semibold mb-2">
+                            Meal Total: <span class="font-bold">₱<span id="mealTotal">0.00</span></span>
+                        </p>
+                        <p class="text-lg md:text-xl font-semibold mb-2">
+                            Total Toll Fee: <span class="font-bold">₱<span id="totalTollFee">0.00</span></span>
+                        </p>
+                        <p class="text-lg md:text-xl font-semibold mb-2">
+                            Total Gas Allowance per Truck: <span class="font-bold">₱<span
+                                    id="gasTotal">0.00</span></span>
+                        </p>
+                        <p class="text-lg md:text-xl font-semibold mb-2">
+                            Total Toll Fee Expenses per Truck: <span class="font-bold">₱<span
+                                    id="tollTotal">0.00</span></span>
+                        </p>
+                        <p class="text-lg md:text-xl font-semibold mb-2">
+                            Total Subcon Fee: <span class="font-bold">₱<span id="totalSubconFee">0.00</span></span>
+                        </p>
+                        <p class="text-lg md:text-xl font-semibold mb-4">
+                            Total Miscellaneous Fee: <span class="font-bold">₱<span
+                                    id="totalMiscellaneousFee">0.00</span></span>
+                        </p>
+                        <hr class="border-blue-300 mb-4">
+                        <p class="text-2xl md:text-3xl font-extrabold text-blue-800 text-center">
+                            Grand Total: ₱<span id="grandTotal">0.00</span>
+                        </p>
+                        <p class="text-2xl md:text-3xl font-extrabold text-blue-800 text-center">
+                            Discounted Grand Total: ₱<span id="discountedGrandTotal">0.00</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
 
         </form>
     </div>
