@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mobilization Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
     <script>
         function updateTotals() {
             let rows = document.querySelectorAll('#laborRows tr');
@@ -68,40 +70,62 @@
             // Sub con wing van 
             const wingvanCount = parseFloat(document.getElementById('wingvanCount').value) || 0;
             const wingvanCost = parseFloat(document.getElementById('wingvanCost').value) || 0;
-           
+
             let totalWingvan = wingvanCount * wingvanCost;
             // sub con crane
             const craneCount = parseFloat(document.getElementById('craneCount').value) || 0;
             const craneCost = parseFloat(document.getElementById('craneCost').value) || 0;
-           
+
             let totalCrane = craneCount * craneCost;
             // subcon manpower
             const manpowerCount = parseFloat(document.getElementById('manpowerCount').value) || 0;
             const manpowerCost = parseFloat(document.getElementById('manpowerCost').value) || 0;
-           
+
             let totalManpower = manpowerCount * manpowerCost;
+
             // subcon equipmenmt
-        
             const equipmentCost = parseFloat(document.getElementById('equipmentCost').value) || 0;
-           
-         
+
+            // airfare
+            const airfareCount = parseFloat(document.getElementById('airfareCount').value) || 0;
+            const airfareCost = parseFloat(document.getElementById('airfareCost').value) || 0;
+            let totalAirfare = airfareCount * airfareCost;
+
+            // accomodation
+            const accomodationCount = parseFloat(document.getElementById('accomodationCount').value) || 0;
+            const accomodationCost = parseFloat(document.getElementById('accomodationCost').value) || 0;
+            let totalAccomodation = accomodationCount * accomodationCost;
+
+            // expendables
+            const expendablesCount = parseFloat(document.getElementById('expendablesCount').value) || 0;
+            const expendablesCost = parseFloat(document.getElementById('expendablesCost').value) || 0;
+            let totalExpendables = expendablesCount * expendablesCost;
+
+
+            //total subcon
             const totalSubcon = totalWingvan + totalCrane + totalManpower + equipmentCost;
             document.getElementById('totalSubconFee').innerText = totalSubcon.toFixed(2);
+
+            // total miscellaneous
+            const totalMiscellaneous = totalExpendables + totalAccomodation + totalAirfare;
+            document.getElementById('totalMiscellaneousFee').innerText = totalMiscellaneous.toFixed(2);
+
             const tollTotalPerTruck = totalTollFee; // same value reused here
             document.getElementById('tollTotal').innerText = tollTotalPerTruck.toFixed(2);
 
-            const finalGrandTotal = subtotal + totalTollFee + gasAllowancePerTruck + totalSubcon;
+            const finalGrandTotal = subtotal + totalTollFee + gasAllowancePerTruck + totalSubcon + totalMiscellaneous;
             document.getElementById('grandTotal').innerText = finalGrandTotal.toFixed(2);
         }
     </script>
 </head>
 
-<body class="bg-gray-100 min-h-screen p-6">
-    <div class="max-w-7xl mx-auto bg-white p-6 rounded-xl shadow-xl">
+<body class="bg-gray-100 min-h-screen px-4 sm:px-6 py-6">
+    <div class="max-w-7xl mx-auto bg-white p-4 sm:p-6 rounded-xl shadow-xl">
+
         <h1 class="text-2xl font-bold mb-6 text-center text-blue-700">Mobilization Labor Cost Calculator</h1>
 
-        <form oninput="updateTotals()">
-            <div class="grid grid-cols-3 gap-4 mb-4">
+        <form oninput="updateTotals()" onsubmit="return false;">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                 <div>
                     <label class="block font-medium mb-1">Number of Days</label>
                     <input id="days" type="number" value="1" class="w-full border px-3 py-2" />
@@ -163,8 +187,8 @@
                 </div>
             </div>
 
-            <div class="overflow-auto">
-                <table class="w-full text-sm mb-6 border">
+            <div class="w-full overflow-x-auto">
+                <table class="min-w-full text-xs sm:text-sm mb-6 border">
                     <thead>
                         <tr class="bg-blue-100 text-blue-900 text-center">
                             <th class="p-3 border">Position</th>
@@ -192,6 +216,54 @@
                             <td class="p-2 border position">Electrician</td>
                             <td class="p-2 border"><input type="number" class="rate w-full border px-2 py-1"
                                     value="710" /></td>
+                            <td class="p-2 border"><input type="number" class="qty w-full border px-2 py-1" value="0" />
+                            </td>
+                            <td class="p-2 border"><input type="number" class="holiday-days w-full border px-2 py-1"
+                                    value="0" /></td>
+                            <td class="p-2 border"><input type="number" class="sunday-days w-full border px-2 py-1"
+                                    value="0" /></td>
+                            <td class="p-2 border total">0.00</td>
+                        </tr>
+                        <tr class="text-center border">
+                            <td class="p-2 border position">Rigger</td>
+                            <td class="p-2 border"><input type="number" class="rate w-full border px-2 py-1"
+                                    value="610" /></td>
+                            <td class="p-2 border"><input type="number" class="qty w-full border px-2 py-1" value="0" />
+                            </td>
+                            <td class="p-2 border"><input type="number" class="holiday-days w-full border px-2 py-1"
+                                    value="0" /></td>
+                            <td class="p-2 border"><input type="number" class="sunday-days w-full border px-2 py-1"
+                                    value="0" /></td>
+                            <td class="p-2 border total">0.00</td>
+                        </tr>
+                        <tr class="text-center border">
+                            <td class="p-2 border position">Carpentry</td>
+                            <td class="p-2 border"><input type="number" class="rate w-full border px-2 py-1"
+                                    value="710" /></td>
+                            <td class="p-2 border"><input type="number" class="qty w-full border px-2 py-1" value="0" />
+                            </td>
+                            <td class="p-2 border"><input type="number" class="holiday-days w-full border px-2 py-1"
+                                    value="0" /></td>
+                            <td class="p-2 border"><input type="number" class="sunday-days w-full border px-2 py-1"
+                                    value="0" /></td>
+                            <td class="p-2 border total">0.00</td>
+                        </tr>
+                        <tr class="text-center border">
+                            <td class="p-2 border position">On-Call</td>
+                            <td class="p-2 border"><input type="number" class="rate w-full border px-2 py-1"
+                                    value="480" /></td>
+                            <td class="p-2 border"><input type="number" class="qty w-full border px-2 py-1" value="0" />
+                            </td>
+                            <td class="p-2 border"><input type="number" class="holiday-days w-full border px-2 py-1"
+                                    value="0" /></td>
+                            <td class="p-2 border"><input type="number" class="sunday-days w-full border px-2 py-1"
+                                    value="0" /></td>
+                            <td class="p-2 border total">0.00</td>
+                        </tr>
+                        <tr class="text-center border">
+                            <td class="p-2 border position">Driver</td>
+                            <td class="p-2 border"><input type="number" class="rate w-full border px-2 py-1"
+                                    value="590" /></td>
                             <td class="p-2 border"><input type="number" class="qty w-full border px-2 py-1" value="1" />
                             </td>
                             <td class="p-2 border"><input type="number" class="holiday-days w-full border px-2 py-1"
@@ -204,74 +276,175 @@
                     </tbody>
                 </table>
             </div>
+            <h1 class="text-2xl font-bold mb-4">Others</h1>
 
-            <div class="grid grid-cols-3 gap-6 mb-4">
-                <div>
-                    <label class="block font-medium mb-1">Cost per Meal</label>
-                    <input id="mealCost" type="number" value="0" class="w-full border px-3 py-2" />
-                </div>
-                <div>
-                    <label class="block font-medium mb-1">Number of Crew</label>
-                    <input id="crewCount" type="number" value="0" class="w-full border px-3 py-2" />
-                </div>
-
-            </div>
-            <h3 class="text-xl p-4 font-bold">Subcon</h3>
-            <h2>Wingvan</h2>
-            <div class="grid grid-cols-3 gap-6 mb-4">
-                <div>
-                    <label class="block font-medium mb-1">Quantity</label>
-                    <input id="wingvanCount" type="number" value="0" class="w-full border px-3 py-2" />
-                </div>
-                <div>
-                    <label class="block font-medium mb-1">Cost</label>
-                    <input id="wingvanCost" type="number" value="0" class="w-full border px-3 py-2" />
-                </div>
-            </div>
-            <h2>Mobile Crane</h2>
-            <div class="grid grid-cols-3 gap-6 mb-4">
-                <div>
-                    <label class="block font-medium mb-1">Quantity</label>
-                    <input id="craneCount" type="number" value="0" class="w-full border px-3 py-2" />
-                </div>
-                <div>
-                    <label class="block font-medium mb-1">Cost</label>
-                    <input id="craneCost" type="number" value="0" class="w-full border px-3 py-2" />
-                </div>
-            </div>
-            <h2>Manpower</h2>
-            <div class="grid grid-cols-3 gap-6 mb-4">
-                <div>
-                    <label class="block font-medium mb-1">Quantity</label>
-                    <input id="manpowerCount" type="number" value="0" class="w-full border px-3 py-2" />
-                </div>
-                <div>
-                    <label class="block font-medium mb-1">Cost</label>
-                    <input id="manpowerCost" type="number" value="0" class="w-full border px-3 py-2" />
-                </div>
-            </div>
-            <h2>Equipment</h2>
-            <div class="grid grid-cols-3 gap-6 mb-4">
-               
-                <div>
-                    <label class="block font-medium mb-1">Cost</label>
-                    <input id="equipmentCost" type="number" value="0" class="w-full border px-3 py-2" />
-                </div>
-            </div>
-            <div class="grid grid-cols-3 gap-6 mb-4 ">
-
-                <div class="flex flex-col justify-center">
-                    <div class="bg-blue-50 p-4 rounded-lg shadow text-blue-900">
-                        <p><strong>Labor Total:</strong> ₱<span id="laborTotal">0.00</span></p>
-                        <p><strong>Meal Total:</strong> ₱<span id="mealTotal">0.00</span></p>
-                        <p><strong>Total Toll Fee:</strong> ₱<span id="totalTollFee">0.00</span></p>
-                        <p><strong>Total Gas Allowance per Truck:</strong> ₱<span id="gasTotal">0.00</span></p>
-                        <p><strong>Total Toll Fee Expenses per Truck:</strong> ₱<span id="tollTotal">0.00</span></p>
-                        <p><strong>Total Subcon Fee:</strong> ₱<span id="totalSubconFee">0.00</span></p>
-                        <p class="text-lg font-bold mt-2">Grand Total: ₱<span id="grandTotal">0.00</span></p>
+            <!-- Meals Section -->
+            <div x-data="{ open: false }" class="border rounded mb-4">
+                <button @click="open = !open" class="w-full text-left px-4 py-2 bg-gray-200 font-semibold">
+                    Meals
+                </button>
+                <div x-show="open" x-transition class="p-4">
+                    <div class="grid grid-cols-3 gap-6">
+                        <div>
+                            <label class="block font-medium mb-1">Cost per Meal</label>
+                            <input id="mealCost" type="number" value="0" class="w-full border px-3 py-2" />
+                        </div>
+                        <div>
+                            <label class="block font-medium mb-1">Number of Crew</label>
+                            <input id="crewCount" type="number" value="0" class="w-full border px-3 py-2" />
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Subcon Section -->
+            <div x-data="{ open: false }" class="border rounded mb-4">
+                <button @click="open = !open" class="w-full text-left px-4 py-2 bg-gray-200 font-semibold">
+                    Subcon
+                </button>
+                <div x-show="open" x-transition class="p-4 space-y-4">
+                    <!-- Wingvan -->
+                    <div>
+                        <h3 class="font-semibold mb-2">Wingvan</h3>
+                        <div class="grid grid-cols-3 gap-6">
+                            <div>
+                                <label class="block font-medium mb-1">Quantity</label>
+                                <input id="wingvanCount" type="number" value="0" class="w-full border px-3 py-2" />
+                            </div>
+                            <div>
+                                <label class="block font-medium mb-1">Cost</label>
+                                <input id="wingvanCost" type="number" value="0" class="w-full border px-3 py-2" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Crane -->
+                    <div>
+                        <h3 class="font-semibold mb-2">Mobile Crane</h3>
+                        <div class="grid grid-cols-3 gap-6">
+                            <div>
+                                <label class="block font-medium mb-1">Quantity</label>
+                                <input id="craneCount" type="number" value="0" class="w-full border px-3 py-2" />
+                            </div>
+                            <div>
+                                <label class="block font-medium mb-1">Cost</label>
+                                <input id="craneCost" type="number" value="0" class="w-full border px-3 py-2" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Manpower -->
+                    <div>
+                        <h3 class="font-semibold mb-2">Manpower</h3>
+                        <div class="grid grid-cols-3 gap-6">
+                            <div>
+                                <label class="block font-medium mb-1">Quantity</label>
+                                <input id="manpowerCount" type="number" value="0" class="w-full border px-3 py-2" />
+                            </div>
+                            <div>
+                                <label class="block font-medium mb-1">Cost</label>
+                                <input id="manpowerCost" type="number" value="0" class="w-full border px-3 py-2" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Equipment -->
+                    <div>
+                        <h3 class="font-semibold mb-2">Equipment</h3>
+                        <div class="grid grid-cols-3 gap-6">
+                            <div>
+                                <label class="block font-medium mb-1">Cost</label>
+                                <input id="equipmentCost" type="number" value="0" class="w-full border px-3 py-2" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Miscellaneous Section -->
+            <div x-data="{ open: false }" class="border rounded mb-4">
+                <button @click="open = !open" class="w-full text-left px-4 py-2 bg-gray-200 font-semibold">
+                    Miscellaneous
+                </button>
+                <div x-show="open" x-transition class="p-4 space-y-4">
+                    <!-- Airfare -->
+                    <div>
+                        <h3 class="font-semibold mb-2">Airfare</h3>
+                        <div class="grid grid-cols-3 gap-6">
+                            <div>
+                                <label class="block font-medium mb-1">Quantity</label>
+                                <input id="airfareCount" type="number" value="0" class="w-full border px-3 py-2" />
+                            </div>
+                            <div>
+                                <label class="block font-medium mb-1">Cost</label>
+                                <input id="airfareCost" type="number" value="0" class="w-full border px-3 py-2" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accommodation -->
+                    <div>
+                        <h3 class="font-semibold mb-2">Accommodation</h3>
+                        <div class="grid grid-cols-3 gap-6">
+                            <div>
+                                <label class="block font-medium mb-1">Quantity</label>
+                                <input id="accomodationCount" type="number" value="0" class="w-full border px-3 py-2" />
+                            </div>
+                            <div>
+                                <label class="block font-medium mb-1">Cost</label>
+                                <input id="accomodationCost" type="number" value="0" class="w-full border px-3 py-2" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Expendables -->
+                    <div>
+                        <h3 class="font-semibold mb-2">Expendables & Other Charges</h3>
+                        <div class="grid grid-cols-3 gap-6">
+                            <div>
+                                <label class="block font-medium mb-1">Quantity</label>
+                                <input id="expendablesCount" type="number" value="0" class="w-full border px-3 py-2" />
+                            </div>
+                            <div>
+                                <label class="block font-medium mb-1">Cost</label>
+                                <input id="expendablesCost" type="number" value="0" class="w-full border px-3 py-2" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-6">
+    <div class="flex flex-col items-center justify-center px-4">
+        <div class="bg-blue-100 p-6 rounded-2xl shadow-lg text-blue-900 w-full max-w-xl">
+            <p class="text-lg md:text-xl font-semibold mb-2">
+                Labor Total: <span class="font-bold">₱<span id="laborTotal">0.00</span></span>
+            </p>
+            <p class="text-lg md:text-xl font-semibold mb-2">
+                Meal Total: <span class="font-bold">₱<span id="mealTotal">0.00</span></span>
+            </p>
+            <p class="text-lg md:text-xl font-semibold mb-2">
+                Total Toll Fee: <span class="font-bold">₱<span id="totalTollFee">0.00</span></span>
+            </p>
+            <p class="text-lg md:text-xl font-semibold mb-2">
+                Total Gas Allowance per Truck: <span class="font-bold">₱<span id="gasTotal">0.00</span></span>
+            </p>
+            <p class="text-lg md:text-xl font-semibold mb-2">
+                Total Toll Fee Expenses per Truck: <span class="font-bold">₱<span id="tollTotal">0.00</span></span>
+            </p>
+            <p class="text-lg md:text-xl font-semibold mb-2">
+                Total Subcon Fee: <span class="font-bold">₱<span id="totalSubconFee">0.00</span></span>
+            </p>
+            <p class="text-lg md:text-xl font-semibold mb-4">
+                Total Miscellaneous Fee: <span class="font-bold">₱<span id="totalMiscellaneousFee">0.00</span></span>
+            </p>
+            <hr class="border-blue-300 mb-4">
+            <p class="text-2xl md:text-3xl font-extrabold text-blue-800 text-center">
+                Grand Total: ₱<span id="grandTotal">0.00</span>
+            </p>
+        </div>
+    </div>
+</div>
+
         </form>
     </div>
 </body>
