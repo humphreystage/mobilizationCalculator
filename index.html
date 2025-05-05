@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mobilization Calculator</title>
+    <title>Project Estimation Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
@@ -201,7 +201,7 @@
 <body class="bg-gray-100 min-h-screen px-4 sm:px-6 py-6">
     <div class="max-w-7xl mx-auto bg-white p-4 sm:p-6 rounded-xl shadow-xl">
 
-        <h1 class="text-2xl font-bold mb-6 text-center text-blue-700">Mobilization Labor Cost Calculator</h1>
+        <h1 class="text-2xl font-bold mb-6 text-center text-blue-700">Project Estimation Calculator</h1>
 
         <form oninput="updateTotals()" onsubmit="return false;">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
@@ -692,7 +692,7 @@
                 </div>
                 <div class="mb-6">
                     <div class="flex flex-col items-center justify-center px-4">
-                        <div class="bg-blue-100 p-6 rounded-2xl shadow-lg text-blue-900 w-full max-w-xl">
+                        <div class="bg-blue-100 p-6 rounded-2xl shadow-lg text-blue-900 w-full max-w-3xl">
                             <div class="mb-4">
                                 <label class="block font-medium mb-2">
                                     <input type="checkbox" id="overtimeCheckbox" class="mr-2" /> Add Overtime to Total
@@ -739,9 +739,11 @@
                             <p class="text-2xl md:text-3xl font-extrabold text-blue-800 text-center">
                                 Grand Total: ₱<span id="grandTotal">0.00</span>
                             </p>
+                            <hr class="border-green-400 mb-4">
                             <p class="text-2xl md:text-3xl font-extrabold text-blue-800 text-center">
                                 Discounted Grand Total: ₱<span id="discountedGrandTotal">0.00</span>
                             </p>
+                            <hr class="border-red-400 mb-4">
                             <p class="text-2xl md:text-3xl font-extrabold text-blue-800 text-center">
                                 Discounted Grand Total w/ VAT(12%): ₱<span id="discountedGrandTotalVAT">0.00</span>
                             </p>
