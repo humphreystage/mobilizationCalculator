@@ -187,9 +187,12 @@
             const discount = parseFloat(document.getElementById('discount').value) || 0;
             const finalGrandTotal = subtotal + totalTollFee + gasTotal + totalSubcon + totalMiscellaneous + equipmentCost;
             const discountedTotal = finalGrandTotal - (finalGrandTotal * (discount / 100));
+            const discountedTotalVAT = (finalGrandTotal - (finalGrandTotal * (discount / 100))) * 1.12;
+
 
             document.getElementById('grandTotal').innerText = finalGrandTotal.toFixed(2);
             document.getElementById('discountedGrandTotal').innerText = discountedTotal.toFixed(2);
+            document.getElementById('discountedGrandTotalVAT').innerText = discountedTotalVAT.toFixed(2);
         }
     </script>
 
@@ -265,17 +268,18 @@
                 </div>
             </div>
 
-       
+
             <div x-data="{ open: false }" class="border rounded mb-4">
                 <button @click="open = !open" class="w-full text-left px-4 py-2 bg-blue-200 font-semibold">
                     Manpower
                 </button>
                 <div x-show="open" x-transition class="p-4 space-y-4">
-                    <table class="min-w-full text-xs sm:text-sm mb-6 border">
+                    <!-- Traditional table for large screens -->
+                    <table class="min-w-full text-xs sm:text-sm mb-6 border hidden lg:table">
                         <thead>
                             <tr class="bg-blue-100 text-blue-900 text-center">
                                 <th class="p-3 border">Position</th>
-                                <th class="p-3 border">Rate(8hrs)</th>
+                                <th class="p-3 border">Rate (8hrs)</th>
                                 <th class="p-3 border">Quantity</th>
                                 <th class="p-3 border">Holiday/s</th>
                                 <th class="p-3 border">Sunday/s</th>
@@ -364,9 +368,136 @@
                             <!-- Add more rows here as needed -->
                         </tbody>
                     </table>
+
+                    <!-- Mobile-friendly version for smaller screens -->
+                    <div class="space-y-4 lg:hidden" id="laborRowsMobile">
+                        <!-- Each "row" becomes a card -->
+                        <div class="border rounded p-3 shadow text-sm bg-white">
+                            <div class="font-semibold text-blue-800">Supervisor</div>
+                            <div class="grid grid-cols-2 gap-2 mt-2">
+                                <label class="block">Rate (8hrs)
+                                    <input type="number" class="rate w-full border px-2 py-1" value="1000" />
+                                </label>
+                                <label class="block">Quantity
+                                    <input type="number" class="qty w-full border px-2 py-1" value="1" />
+                                </label>
+                                <label class="block">Holiday/s
+                                    <input type="number" class="holiday-days w-full border px-2 py-1" value="0" />
+                                </label>
+                                <label class="block">Sunday/s
+                                    <input type="number" class="sunday-days w-full border px-2 py-1" value="0" />
+                                </label>
+                                <div class="col-span-2 text-right font-medium text-gray-700">
+                                    Total: <span class="total">0.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Repeat similar blocks for Electrician, Rigger, etc. -->
+
+                        <div class="border rounded p-3 shadow text-sm bg-white">
+                            <div class="font-semibold text-blue-800">Electrician</div>
+                            <div class="grid grid-cols-2 gap-2 mt-2">
+                                <label class="block">Rate (8hrs)
+                                    <input type="number" class="rate w-full border px-2 py-1" value="710" />
+                                </label>
+                                <label class="block">Quantity
+                                    <input type="number" class="qty w-full border px-2 py-1" value="0" />
+                                </label>
+                                <label class="block">Holiday/s
+                                    <input type="number" class="holiday-days w-full border px-2 py-1" value="0" />
+                                </label>
+                                <label class="block">Sunday/s
+                                    <input type="number" class="sunday-days w-full border px-2 py-1" value="0" />
+                                </label>
+                                <div class="col-span-2 text-right font-medium text-gray-700">
+                                    Total: <span class="total">0.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border rounded p-3 shadow text-sm bg-white">
+                            <div class="font-semibold text-blue-800">Rigger</div>
+                            <div class="grid grid-cols-2 gap-2 mt-2">
+                                <label class="block">Rate (8hrs)
+                                    <input type="number" class="rate w-full border px-2 py-1" value="610" />
+                                </label>
+                                <label class="block">Quantity
+                                    <input type="number" class="qty w-full border px-2 py-1" value="0" />
+                                </label>
+                                <label class="block">Holiday/s
+                                    <input type="number" class="holiday-days w-full border px-2 py-1" value="0" />
+                                </label>
+                                <label class="block">Sunday/s
+                                    <input type="number" class="sunday-days w-full border px-2 py-1" value="0" />
+                                </label>
+                                <div class="col-span-2 text-right font-medium text-gray-700">
+                                    Total: <span class="total">0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border rounded p-3 shadow text-sm bg-white">
+                            <div class="font-semibold text-blue-800">Carpentry</div>
+                            <div class="grid grid-cols-2 gap-2 mt-2">
+                                <label class="block">Rate (8hrs)
+                                    <input type="number" class="rate w-full border px-2 py-1" value="710" />
+                                </label>
+                                <label class="block">Quantity
+                                    <input type="number" class="qty w-full border px-2 py-1" value="0" />
+                                </label>
+                                <label class="block">Holiday/s
+                                    <input type="number" class="holiday-days w-full border px-2 py-1" value="0" />
+                                </label>
+                                <label class="block">Sunday/s
+                                    <input type="number" class="sunday-days w-full border px-2 py-1" value="0" />
+                                </label>
+                                <div class="col-span-2 text-right font-medium text-gray-700">
+                                    Total: <span class="total">0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border rounded p-3 shadow text-sm bg-white">
+                        <div class="font-semibold text-blue-800">On-Call</div>
+                        <div class="grid grid-cols-2 gap-2 mt-2">
+                            <label class="block">Rate (8hrs)
+                                <input type="number" class="rate w-full border px-2 py-1" value="480" />
+                            </label>
+                            <label class="block">Quantity
+                                <input type="number" class="qty w-full border px-2 py-1" value="0" />
+                            </label>
+                            <label class="block">Holiday/s
+                                <input type="number" class="holiday-days w-full border px-2 py-1" value="0" />
+                            </label>
+                            <label class="block">Sunday/s
+                                <input type="number" class="sunday-days w-full border px-2 py-1" value="0" />
+                            </label>
+                            <div class="col-span-2 text-right font-medium text-gray-700">
+                                Total: <span class="total">0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border rounded p-3 shadow text-sm bg-white">
+                        <div class="font-semibold text-blue-800">Driver</div>
+                        <div class="grid grid-cols-2 gap-2 mt-2">
+                            <label class="block">Rate (8hrs)
+                                <input type="number" class="rate w-full border px-2 py-1" value="590" />
+                            </label>
+                            <label class="block">Quantity
+                                <input type="number" class="qty w-full border px-2 py-1" value="0" />
+                            </label>
+                            <label class="block">Holiday/s
+                                <input type="number" class="holiday-days w-full border px-2 py-1" value="0" />
+                            </label>
+                            <label class="block">Sunday/s
+                                <input type="number" class="sunday-days w-full border px-2 py-1" value="0" />
+                            </label>
+                            <div class="col-span-2 text-right font-medium text-gray-700">
+                                Total: <span class="total">0.00</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-
             </div>
 
             <div x-data="{ open: false }" class="border rounded mb-4">
@@ -610,6 +741,9 @@
                             </p>
                             <p class="text-2xl md:text-3xl font-extrabold text-blue-800 text-center">
                                 Discounted Grand Total: ₱<span id="discountedGrandTotal">0.00</span>
+                            </p>
+                            <p class="text-2xl md:text-3xl font-extrabold text-blue-800 text-center">
+                                Discounted Grand Total w/ VAT(12%): ₱<span id="discountedGrandTotalVAT">0.00</span>
                             </p>
                         </div>
                     </div>
